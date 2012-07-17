@@ -11,11 +11,12 @@ block content
     input#send
   ul#messages
   script
-    var socket = io.connect('http://localhost:3001');
+    var socket = io.connect('http://'+document.domain+':3001');
     var username = null;
 
     socket.on('register', function (data){
-        var username = window.prompt(data);
+        var username = null;
+        while(!username) username = window.prompt(data);
         socket.emit('register', username);
     });
 
@@ -25,7 +26,7 @@ block content
     });
 
     socket.on('send', function(data){
-        $('#messages').append('<li>' + data + '</li>');
+        $('#messages').prepend('<li>' + data + '</li>');
     });
 
     socket.on('online', function(data){
