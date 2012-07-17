@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  h1 Node聊天室
+  div
+    用户名:
+    span#username
+    在线数:
+    span#online
+  div
+    input#send
+  ul#messages
+  script
+    var socket = io.connect('http://localhost:3001');
+    var username = null;
+
+    socket.on('register', function (data){
+        var username = window.prompt(data);
+        socket.emit('register', username);
+    });
+
+    socket.on('register ok', function(data){
+        username = data;
+        $('#username').html(username);
+    });
+
+    socket.on('send', function(data){
+        $('#messages').append('<li>' + data + '</li>');
+    });
+
+    socket.on('online', function(data){
+        $('#online').html(data);
+    });
+
+    $('#send').keydown(function(e){
+        if (e.which == 13) {
+            socket.emit('send', $('#send').val());
+            $('#send').val('');
+        }
+    });
